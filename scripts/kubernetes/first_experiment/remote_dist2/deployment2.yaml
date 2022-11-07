@@ -14,6 +14,8 @@ spec:
       labels:
         app: remote-dist2
     spec:
+      nodeSelector:
+        placement: cloud
       containers:
       - name: remote-dist2
         image: docker.io/robertovrf/remote-dist:all

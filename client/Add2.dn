@@ -1,7 +1,7 @@
 component provides App requires io.Output out, net.http.HTTPRequest http, data.IntUtil iu, 
     time.DateUtil dateUtil, time.Calendar ic {
-	char server[] = "localhost:8080"
-	//char server[] = "34.71.140.48:5000"
+	// char server[] = "localhost:8080"
+	char server[] = "192.168.0.101:8080"
 	
 	int App:main(AppParam params[]) {
 		HTTPResponse resp

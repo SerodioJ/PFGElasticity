@@ -1,7 +1,7 @@
 component provides App requires io.Output out, net.http.HTTPRequest http,
 	data.IntUtil iu, data.StringUtil su, util.Random rand, time.Timer time {
 	
-	char baseUrl[] = "http://localhost:8080/"
+	char baseUrl[] = "http://192.168.0.101:8080/"
 	char addOp[] = "add"
 	char getOp[] = "get"
 

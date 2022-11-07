@@ -1,6 +1,6 @@
 // Author: Roberto Rodrigues Filho - Dec@2021
 const int NUM_REQ = 4
-const char server[] = "localhost"
+const char server[] = "192.168.0.101"
 
 component provides App requires io.Output out, data.IntUtil iu, net.http.HTTPRequest http, 
 util.Random ran, time.Timer t {

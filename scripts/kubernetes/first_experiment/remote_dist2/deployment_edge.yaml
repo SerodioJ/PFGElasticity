@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  labels:
+    app: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      nodeSelector:
+        placement: edge
+        type: rasp4
+      containers:
+      - name: server
+        image: serodioj/dana_app:latest
+        imagePullPolicy: Always
+        env:
+        - name: AGENT_TYPE
+          value: "0"
+        - name: REMOTE_IP1
+          value: "10.152.0.16"
+        - name: REMOTE_IP2
+          value: "10.152.1.14"
+        ports:
+        - containerPort: 8080
