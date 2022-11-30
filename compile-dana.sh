@@ -1,18 +1,13 @@
 cd client
 dnc . -v
-cd ..
-cd readn
+cd ../readn
 dnc . -v
-cd ..
-cd readn-writen
+cd ../readn-writen
 dnc . -v
-cd ..
-cd writen
+cd ../writen
 dnc . -v
-cd ..
-cd server
+cd ../server
 dnc . -v
-cd ..
-cd distributor
+cd ../distributor
 dnc . -sp ../server -v
 cd ..
