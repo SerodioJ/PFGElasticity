@@ -3,7 +3,7 @@ dnc . -v
 cd ../readn
 dnc . -v
 cd ../readn-writen
-dnc . -v
+dnc . -sp ../distributor -v
 cd ../writen
 dnc . -v
 cd ../server

@@ -2,11 +2,44 @@ data Node {
     int key
 }
 
-component provides List:heap(Destructor, AdaptEvents) requires io.Output out, data.IntUtil iu {
+data StartPayload{
+    char region[]
+}
+
+data StartResponse{
+    char uuid[]
+}
+
+data EndResponse{
+    dec energy
+    dec time
+    dec power[]
+    dec ts[]
+}
+
+component provides List:heap(Destructor, AdaptEvents) requires io.Output out, data.IntUtil iu,data.DecUtil du, net.http.HTTPRequest http, data.json.JSONEncoder json, os.SystemInfo info {
 
     Node heap[] = null
     int length = 0
     Mutex heapLock = new Mutex()
+
+    StartResponse startMeasurements(char region[]){
+        StartPayload payload = new StartPayload()
+        char base_url[] = info.getVariable("BASE_URL")
+        payload.region = region
+        HTTPResponse resp = http.post(new char[](base_url, "/region/start"), null, json.jsonFromData(payload))
+        StartResponse respContent = json.jsonToData(resp.content, typeof(StartResponse))
+        return respContent
+    }
+
+    EndResponse endMeasuments(char uuid[]){
+        StartResponse payload = new StartResponse()
+        char base_url[] = info.getVariable("BASE_URL")
+        payload.uuid = uuid
+        HTTPResponse resp = http.post(new char[](base_url, "/region/end"), null, json.jsonFromData(payload))
+        EndResponse respContent = json.jsonToData(resp.content, typeof(EndResponse))
+        return respContent
+    }
 
     /*
     * Add item to heap.
@@ -17,6 +50,7 @@ component provides List:heap(Destructor, AdaptEvents) requires io.Output out, da
     */
     void List:add(Data item) {
         mutex(heapLock) {
+            StartResponse res = startMeasurements("add_item")
             if (length == 0) {
              heap = new Node[]()
             }
@@ -43,6 +77,8 @@ component provides List:heap(Destructor, AdaptEvents) requires io.Output out, da
             }
             result = new char[](result, " ]")
             //out.println("$(result)")
+            EndResponse values = endMeasuments(res.uuid)
+            out.println(new char[]("ADD_ITEM: ", du.makeString(values.energy), " J, ", du.makeString(values.time), " s"))
         }
     }
 
@@ -53,6 +89,7 @@ component provides List:heap(Destructor, AdaptEvents) requires io.Output out, da
     */
     void List:remove(Data item) {
         mutex(heapLock) {
+            StartResponse res = startMeasurements("remove_item")
             Node itemToRemove = item
             int itemIdx = 0
             for (int i = 0; i < length; i++) {
@@ -64,6 +101,8 @@ component provides List:heap(Destructor, AdaptEvents) requires io.Output out, da
             }
             length--
             heapify(heap, length, itemIdx)
+            EndResponse values = endMeasuments(res.uuid)
+            out.println(new char[]("REMOVE_ITEM: ", du.makeString(values.energy), " J, ", du.makeString(values.time), " s"))
         }
     }
 
@@ -120,6 +159,7 @@ component provides List:heap(Destructor, AdaptEvents) requires io.Output out, da
             if (heap == null) { 
                 return new Data[] 
             }
+            StartResponse res = startMeasurements("get_items")
             Node sortedHeapCopy[] = heapsort(heap, length)
             Data items[]
             if (isset t) {
@@ -134,6 +174,8 @@ component provides List:heap(Destructor, AdaptEvents) requires io.Output out, da
             //    Data item[] = new Data[](items[0])
             //    return item
             //}
+            EndResponse values = endMeasuments(res.uuid)
+            out.println(new char[]("GET_ITEMS: ", du.makeString(values.energy), " J, ", du.makeString(values.time), " s"))
             return items
         }
     }
